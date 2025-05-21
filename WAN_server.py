@@ -4,7 +4,8 @@ import subprocess
 import sys
 import shutil
 import time
-import argparse
+import platform
+import threading
 
 def get_free_port(start=5500):
     for port in range(start, start + 100):
@@ -26,62 +27,102 @@ def get_local_ip():
     except:
         return "localhost"
 
-def launch_server(port):
-    script = f"""
+def launch_server_script(port, log_mode=False):
+    script = f'''
 import http.server
 import socketserver
 PORT = {port}
 Handler = http.server.SimpleHTTPRequestHandler
 with socketserver.TCPServer(('0.0.0.0', PORT), Handler) as httpd:
-    print('Localhost:  http://localhost:{port}')
-    print('LAN access: http://{get_local_ip()}:{port}')
-    print('Note: Geolocation may not work without HTTPS.')
+    print('Server running on http://localhost:{port}')
     httpd.serve_forever()
-"""
+'''
     fname = "temp_server.py"
     with open(fname, "w") as f:
         f.write(script)
 
-    if os.name == "nt":
-        subprocess.Popen(["start", "cmd", "/k", f"python {fname}"], shell=True)
+    if log_mode:
+        if os.name == "nt":
+            subprocess.Popen(["start", "cmd", "/k", f"python {fname}"], shell=True)
+        else:
+            subprocess.Popen(["x-terminal-emulator", "-e", f"python3 {fname}"])
     else:
-        subprocess.Popen(["gnome-terminal", "--", "python3", fname])
+        return subprocess.Popen([sys.executable, fname])
 
-def launch_localtunnel(port):
-    if not shutil.which("lt"):
-        print("\nERROR: LocalTunnel not installed.\nInstall with: npm install -g localtunnel\n")
-        return
-    print("Launching secure tunnel (HTTPS)...")
-    subprocess.Popen(["lt", "--port", str(port)])
-    print("Public secure tunnel will be at: https://<random>.loca.lt")
+def check_dependencies():
+    node_installed = shutil.which("node") is not None
+    npm_installed = shutil.which("npm") is not None
+    lt_installed = shutil.which("lt") is not None
+    if not node_installed or not npm_installed:
+        print("ERROR: Node.js and npm are required for tunneling. Please install them from https://nodejs.org/")
+        return False
+    if not lt_installed:
+        print("Installing LocalTunnel...")
+        subprocess.call(["npm", "install", "-g", "localtunnel"])
+    return True
 
-def launch_cloudflared(port):
-    if not shutil.which("cloudflared"):
-        print("\nERROR: Cloudflare Tunnel not installed.\nInstall with: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install/\n")
-        return
-    print("Launching Cloudflare Tunnel (HTTPS)...")
-    subprocess.Popen(["cloudflared", "tunnel", "--url", f"http://localhost:{port}"])
+def start_localtunnel(port):
+    print("Starting LocalTunnel...")
+    return subprocess.Popen(["lt", "--port", str(port)])
 
-def print_help(port):
-    print("\nAccess Info:")
-    print(f"  - Local:     http://localhost:{port}")
-    print(f"  - LAN:       http://{get_local_ip()}:{port}")
-    print("  - HTTPS:     Use --https to create secure public link for geolocation/camera")
-    print("Note: Browsers require HTTPS to allow geolocation or camera access.")
+def interactive_menu(port, tunnel_proc):
+    while True:
+        print("\n--- Control Menu ---")
+        print(f"[1] Stop Tunnel ({'Active' if tunnel_proc else 'Inactive'})")
+        print("[2] Stop Server")
+        print("[3] Restart Server")
+        print("[4] Return to LAN Only")
+        print("[5] Exit")
+        choice = input("Enter choice: ").strip()
+
+        if choice == "1" and tunnel_proc:
+            print("Stopping tunnel...")
+            tunnel_proc.terminate()
+            tunnel_proc = None
+        elif choice == "2":
+            print("Stopping server...")
+            os._exit(0)
+        elif choice == "3":
+            print("Restarting server...")
+            os._exit(100)
+        elif choice == "4" and tunnel_proc:
+            print("Returning to LAN only...")
+            tunnel_proc.terminate()
+            tunnel_proc = None
+        elif choice == "5":
+            print("Exiting...")
+            if tunnel_proc:
+                tunnel_proc.terminate()
+            os._exit(0)
+        else:
+            print("Invalid option or tunnel not active.")
+
+def main():
+    port = get_free_port()
+    local_ip = get_local_ip()
+
+    print(f"Launching HTTP server on port {port}...")
+    launch_server_script(port, log_mode=True)  # Logging terminal
+    server_proc = launch_server_script(port)   # Internal use
+
+    print(f"Localhost:  http://localhost:{port}")
+    print(f"LAN:       http://{local_ip}:{port}")
+    print("Note: Browsers block geolocation on HTTP (except localhost).")
+
+    wan_option = input("Do you want to enable public internet access via secure HTTPS tunnel? (Y/n): ").strip().lower()
+    tunnel_proc = None
+
+    if wan_option == "y":
+        if check_dependencies():
+            tunnel_proc = start_localtunnel(port)
+            print("Tunnel running. Public HTTPS link will appear in the new terminal or your browser.")
+
+    interactive_menu(port, tunnel_proc)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--https", action="store_true", help="Start secure HTTPS tunnel using LocalTunnel")
-    parser.add_argument("--cloudflare", action="store_true", help="Use Cloudflare Tunnel instead of LocalTunnel")
-    args = parser.parse_args()
-
-    port = get_free_port()
-    launch_server(port)
-    time.sleep(2)
-    print_help(port)
-
-    if args.https:
-        if args.cloudflare:
-            launch_cloudflared(port)
-        else:
-            launch_localtunnel(port)
+    try:
+        main()
+    except SystemExit as e:
+        if e.code == 100:
+            print("Restarting...")
+            os.execv(sys.executable, ['python'] + sys.argv)
