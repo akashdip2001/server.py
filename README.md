@@ -215,7 +215,7 @@ if __name__ == "__main__":
 ---
 ---
 
-# ⛳ WAN
+# ⛳ WAN 0.2
 
 ---
 
@@ -381,3 +381,52 @@ if __name__ == "__main__":
 * Switch between WAN/LAN
 
 ---
+
+## ⚠️ Let’s upgrade the server with auto-reload capability, so any file changes (like .html, .css, .js, etc.) in the project directory will automatically be reflected without restarting the server.
+
+
+---
+
+#### Here’s the new plan:
+
+1. Watch the project directory for file changes.
+
+2. On change:
+
+Reload the HTTP server (if required — usually browsers auto-refresh for static files).
+
+Optional: Auto-refresh browser using WebSocket/live-reload script injection.
+
+---
+
+Best Option for Static File Monitoring in Python
+
+We’ll use:
+
+http.server for serving static files (already good)
+
+watchdog (Python library) to detect changes
+
+Optional: inject LiveReload for automatic browser refresh
+
+
+
+---
+
+Upgrade Strategy
+
+- Option 1 — Basic Auto-Restart
+
+Simplest: When a file changes:
+
+Restart server
+
+
+- Option 2 — Auto-Browser Reload (Best for UX)
+
+LiveReload with:
+
+livereload.Server.watch()
+
+Browser auto-refreshes when any .html, .css, .js changes
+
