@@ -26,6 +26,9 @@ my-website/
 
 ---
 
+https://github.com/user-attachments/assets/4025ec9f-ca5a-4488-90cc-a901e14c2a7d
+
+
 ### 🟢 Step 1: Run the server
 
 - Double-click the script, or
