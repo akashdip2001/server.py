@@ -57,9 +57,17 @@ This will:
 
 # ⛳ WAN
 
+I want to create a single smart Python script that:
+
+* **Starts a local server**
+* **Finds a free port**
+* **Offers to expose via a secure HTTPS tunnel using LocalTunnel or Cloudflare**
+* **Tells developer what features may/may not work based on their access method (like geolocation over HTTP)**
+* **Provides CLI options like `--https` to force a tunnel for geolocation**
+
 ---
 
-## **Core Problem**
+## Why `HTTPS` ?? not `HTTP` -- **Core Problem**
 
 ### Browsers block location (and other sensitive APIs) unless the site is:
 
@@ -76,18 +84,6 @@ So if i serving from `192.168.x.x:5500` over **HTTP**, the browser will **refuse
 2. Serves content on **localhost + LAN**
 3. Also optionally exposes **HTTPS-secured public tunnel** (so geolocation, camera, or microphone access works)
 4. Detects all this automatically and guides the developer clearly
-
----
-
-## **Final Plan**
-
-It's a single smart Python script that:
-
-* **Starts a local server**
-* **Finds a free port**
-* **Offers to expose via a secure HTTPS tunnel using LocalTunnel or Cloudflare**
-* **Tells developer what features may/may not work based on their access method (like geolocation over HTTP)**
-* **Provides CLI options like `--https` to force a tunnel for geolocation**
 
 ---
 
@@ -387,7 +383,7 @@ if __name__ == "__main__":
 
 ---
 
-#### Here’s the new plan:
+#### UPDATE REQUIRED 
 
 1. Watch the project directory for file changes.
 
