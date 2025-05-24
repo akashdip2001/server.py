@@ -1,5 +1,7 @@
 # server.py
 
+![111](https://github.com/user-attachments/assets/d6b4e219-95e4-48a9-96a7-6d6298f39f9b)
+
 # ⛳ LAN
 
 ```perl
