@@ -697,6 +697,28 @@
             </a>
           </div>          
       </div>
+
+    <p style="color: #dad6e9; font-size: 0.75rem; text-align: center; cursor: pointer;" onclick="showTermsModal()">
+        *Terms and Conditions apply
+      </p>
+      <!-- Terms Modal -->
+      <div class="modal-overlay" id="termsModal">
+        <div class="modal-content" style="max-width: 600px;">
+          <h3 style="margin-bottom: 15px;">🎓 Terms and Conditions</h3>
+          <ul style="padding-left: 20px; font-size: 0.9rem; color: #ddd;">
+            <li>This time I am a final year B.Tech Mechanical Engineering student.</li>
+            <li>And because I am a GitHub Campus Expert, I get the vouchers 🎟️.</li>
+            <li>So I give those vouchers to students who have a hunger to create something new.</li>
+            <li>After I pass out, it's not possible to get vouchers again, so this is a limited-time offer.</li>
+            <li>That’s why I set a 2-month deadline to complete your projects.</li>
+            <li>If students complete hard projects well, I may send the voucher within a week.</li>
+            <li>But once I pass out, my ID will likely expire, so I cannot send any more vouchers after that.</li>
+          </ul>
+          <button onclick="document.getElementById('termsModal').style.display='none'" style="margin-top: 15px; color: #ff9800;">
+            Close
+          </button>
+        </div>
+      </div> 
   
   <!-- 📨 Popup Modal -->
   <div id="submitModal" class="modal-overlay">
@@ -1131,6 +1153,18 @@
     input.required = true;
     container.appendChild(input);
   }
+
+   function showTermsModal() {
+    document.getElementById("termsModal").style.display = "flex";
+  }
+
+  // Allow click outside to close
+  document.addEventListener("click", function (e) {
+    const modal = document.getElementById("termsModal");
+    if (modal && e.target === modal) {
+      modal.style.display = "none";
+    }
+  });
 
   document.getElementById("submissionForm").addEventListener("submit", function (e) {
   e.preventDefault();
