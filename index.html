@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Akashdip's Project Portfolio</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #1f1c2c, #928dab);
+        color: #fff;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      header h1 {
+        font-size: 2.5rem;
+        text-shadow: 2px 2px 5px #000;
+      }
+
+      .category {
+        margin-bottom: 40px;
+      }
+
+      .category h2 {
+        border-left: 5px solid #ff9800;
+        padding-left: 15px;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+        text-shadow: 1px 1px 3px #000;
+      }
+
+      .projects {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .project-card {
+        background: #2e2a4b;
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+
+      .project-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(255, 152, 0, 0.6);
+      }
+
+      .project-card img {
+        width: 100%;
+        height: auto;
+        max-height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+
+      .project-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+
+      .project-card p {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .project-card a {
+        color: #ff9800;
+        text-decoration: none;
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .tech-used {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+
+      .tech-tag {
+        padding: 4px 8px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+      }
+
+      .tech-hard {
+        background-color: #ff9800;
+      }
+
+      @media (max-width: 600px) {
+        header h1 {
+          font-size: 2rem;
+        }
+      }
+
+      .tech-list span {
+        font-size: 0.8rem;
+        box-shadow: 1px 1px 3px #00000044;
+      }
+
+      .project-card ul {
+        padding-left: 20px;
+        margin-bottom: 10px;
+      }
+
+      .project-card li {
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      /* Fullscreen image preview */
+      #imgPreview {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90vw;
+        max-height: 90vh;
+        border: 5px solid #fff;
+        box-shadow: 0 0 20px #000;
+        display: none;
+        z-index: 1000;
+        border-radius: 10px;
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9) translate(-50%, -50%);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translate(-50%, -50%);
+        }
+      }
+
+      .tech-easy {
+        background-color: #4caf50;
+      }
+      .tech-medium {
+        background-color: #2196f3;
+      }
+      .tech-hard {
+        background-color: #ff5722;
+      }
+      .tech-sample {
+        background-color: #9e9e9e;
+      }
+      .tech-scratch {
+        background-color: #e91e63;
+      }
+
+      .project-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+
+      /* Tooltip container */
+      .tooltip-sample {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      /* Tooltip text */
+      .tooltip-sample .tooltip-text {
+        visibility: hidden;
+        width: 240px;
+        background-color: #333;
+        color: #fff;
+        text-align: left;
+        border-radius: 8px;
+        padding: 8px 12px;
+        position: absolute;
+        z-index: 1;
+        bottom: 130%; /* Position above */
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      /* Tooltip arrow */
+      .tooltip-sample .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: 100%; /* Bottom of tooltip */
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 6px;
+        border-style: solid;
+        border-color: #333 transparent transparent transparent;
+      }
+
+      /* Show tooltip on hover */
+      .tooltip-sample:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      /* Popup for mobile */
+      .sample-popup {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 8px;
+        z-index: 9999;
+        display: none;
+        font-size: 0.9rem;
+      }
+
+      .desc {
+        font-size: 0.75rem;
+        max-height: 4.5em; /* ~3 lines */
+        overflow: hidden;
+        position: relative;
+      }
+
+      .desc.show-full {
+        max-height: none;
+      }
+
+      .learn-more {
+        color: #ff9800;
+        font-size: 0.75rem;
+        cursor: pointer;
+        display: inline-block;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: #2e2a4b;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        color: white;
+        font-size: 0.85rem;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="modal-overlay" id="descModal">
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+
+    <img id="imgPreview" />
+    <header>
+      <h1>Akashdip's Project Portfolio</h1>
+    </header>
+
+    <div class="category">
+      <h2>Development</h2>
+      <div class="projects" id="development-projects"></div>
+    </div>
+
+    <div class="category">
+      <h2>IoT</h2>
+      <div class="projects" id="iot-projects"></div>
+    </div>
+
+    <div class="category">
+      <h2>Networking</h2>
+      <div class="projects" id="networking-projects"></div>
+    </div>
+
+    <div class="category">
+      <h2>H@cking</h2>
+      <div class="projects" id="penetration-testing-projects"></div>
+    </div>
+
+    <script>
+      const techLevels = {
+        JavaScript: "easy",
+        HTML: "easy",
+        CSS: "easy",
+        PHP: "hard",
+        SQL: "hard",
+        React: "hard",
+        Nodejs: "hard",
+        MongoDB: "hard",
+        Express: "hard",
+        WebSocket: "hard",
+        Python: "easy",
+        ESP32: "hard",
+        "GPS-module": "hard",
+        ESP8266: "hard",
+      };
+
+      const projects = [
+        {
+          title: "Portfolio Website",
+          difficulty: "easy",
+          desc: `<ul>
+                   <li>Create your own portfolio website to showcase your projects and skills. &</li>
+                   <li>Includes a contact form using SMTP (must take user email & phone number), and</li>
+                   <li>store the data in a database for future contact.</li>
+                 </ul>`,
+          img: "/img/Portfolio Website.png",
+          link: "https://github.com/akashdip2001/",
+          technologiesOptions: {
+            "PHP + SQL": ["JavaScript", "PHP", "SQL"],
+            "MERN Stack": ["MongoDB", "Express", "React", "Nodejs"],
+          },
+          categories: ["Development"],
+        },
+        {
+          title: "Realtime Tracker",
+          difficulty: "sample",
+          desc: "Dynamic web app for tracking devices in real-time using WebSockets.",
+          img: "https://github.com/akashdip2001/Realtime_Tracker/raw/main/public/images/Title%20img%2002.jpg",
+          link: "https://github.com/akashdip2001/Realtime_Tracker",
+          technologies: ["JavaScript", "WebSocket"],
+          categories: ["Development"],
+        },
+        {
+          title: "server.py",
+          difficulty: "easy",
+          desc: `<ul>
+                    <li>This project includes a Python-based server that exposes <code>index.html</code> on a local port (see <code>LAN-server.py</code>).</li>
+                    <li>Your task is to work on <code>WAN-server.py</code> to expose your local site over the internet.</li>
+                    <li>Also, implement SSL for secure connections (like a secure tunnel).</li>
+                    <li>It helps developers test their local sites on real devices — completely free and open-source.</li>
+                 </ul>`,
+          img: "/img/server-py.png",
+          link: "https://github.com/akashdip2001/server.py",
+          technologies: ["Python"],
+          categories: ["Networking", "Development"],
+        },
+        {
+          title: "NAS",
+          difficulty: "medium",
+          desc: `<ul>
+                   <li>It's the iOT projects, but this time you have to fix web issues.</li>
+                   <li>Upgrade the HTML interface (Development), Or</li>
+                   <li>Add or fix features, e.g., fix image preview in web UI, Or</li>
+                   <li>Fix extension issue when downloading files</li>
+                 </ul>`,
+          img: "/img/NAS.jpg",
+          link: "https://github.com/akashdip2001/NAS-with-ESP32",
+          technologies: ["ESP8266"],
+          categories: ["Networking", "Development"],
+        },
+        {
+          title: "GPS-with-ESP",
+          difficulty: "easy",
+          desc: "Detect user location with ESP32 and GPS module over secure SSL.",
+          img: "https://github.com/akashdip2001/GPS-with-ESP/raw/main/public/Leaflet%20JS%2001.jpg",
+          link: "https://github.com/akashdip2001/GPS-with-ESP",
+          technologies: ["JavaScript", "WebSocket", "ESP32", "GPS-module"],
+          categories: ["IoT"],
+        },
+
+        {
+          title: "iOT Game",
+          difficulty: "hard",
+          desc: `<ul>
+                  <li>Add new obstacles, Or</li>
+                  <li>Optimize the game for this OLED display</li>
+                </ul>`,
+          img: "/img/iOT game.jpg",
+          link: "https://github.com/akashdip2001/ARDUINO-with-OLED-Display-Game",
+          technologies: ["Python"],
+          categories: ["IoT"],
+        },
+        {
+          title: "Network Scanner & Blocker",
+          difficulty: "sample",
+          desc: `<ul>
+                   <li>Scan any network for connected devices, and</li>
+                   <li>Block any device without connecting to the router.</li>
+                 </ul>`,
+          img: "/img/Wi-Fi-deauther.jpg",
+          link: "https://github.com/akashdip2001/Wi-Fi-deauther-with-ESP8266-OLED-module",
+          technologies: [],
+          categories: ["H@cking", "Networking", "IoT"],
+        },
+        {
+          title: "Fake AP + Captive Portal",
+          difficulty: ["hard", "scratch"],
+          desc: `<ul>
+                  <li>create hunny pot (fake Wi-Fi network) to capture user credentials, and</li>
+                  <li>redirect them to a fake login page.</li>
+                  <li>store the captured data in a database for future use.</li>
+                </ul>`,
+          img: "https://github.com/akashdip2001/High-end-autonomous-anomaly-detection-robot/raw/main/img/modules%20(4).jpg",
+          link: "https://github.com/akashdip2001/Wi-Fi-deauther-with-ESP8266-OLED-module",
+          technologies: [],
+          categories: ["IoT", "H@cking", "Networking"],
+        },
+        {
+          title: "Fake AP + Captive Portal",
+          difficulty: ["hard", "scratch"],
+          desc: `<ul>
+                  <li>check the previous project, and</li>
+                  <li>use the password from database & try to connect to the main network automatically, and</li>
+                  <li>If wrong again request for password.</li>
+                </ul>`,
+          img: "https://github.com/akashdip2001/High-end-autonomous-anomaly-detection-robot/raw/main/img/modules%20(4).jpg",
+          link: "https://github.com/akashdip2001/Wi-Fi-deauther-with-ESP8266-OLED-module",
+          technologies: [],
+          categories: ["IoT", "H@cking", "Networking"],
+        },
+      ];
+
+      function renderProjects() {
+        const devContainer = document.getElementById("development-projects");
+        const iotContainer = document.getElementById("iot-projects");
+        const netContainer = document.getElementById("networking-projects");
+        const hackContainer = document.getElementById(
+          "penetration-testing-projects"
+        );
+
+        projects.forEach((project) => {
+          const card = document.createElement("div");
+          card.className = "project-card";
+
+          // 🟡 Difficulty Badge Logic moved inside the loop
+          let difficultyBadge = "";
+          if (project.difficulty) {
+            if (Array.isArray(project.difficulty)) {
+              difficultyBadge = project.difficulty
+                .map(
+                  (level) =>
+                    `<span class="tech-tag tech-${level}">${level}</span>`
+                )
+                .join(" ");
+            } else {
+              if (project.difficulty === "sample") {
+                difficultyBadge = `
+                   <span class="tooltip-sample">
+                     <span class="tech-tag tech-sample">sample</span>
+                     <span class="tooltip-text">This is a sample project. Take ideas and create your own.</span>
+                   </span>
+                 `;
+              } else {
+                difficultyBadge = `<span class="tech-tag tech-${project.difficulty}">${project.difficulty}</span>`;
+              }
+            }
+          }
+
+          let techHTML = "";
+          let stackSelectorHTML = "";
+
+          if (project.technologiesOptions) {
+            const stackNames = Object.keys(project.technologiesOptions);
+            const defaultStack = stackNames[0];
+            const defaultTechs = project.technologiesOptions[defaultStack];
+
+            techHTML = renderTechnologies(defaultTechs);
+            stackSelectorHTML = `
+        <label style="display:block;margin-top:10px;font-size:0.8rem;">
+          Choose Stack:
+          <select onchange="updateTechList(this, '${project.title.replace(
+            /'/g,
+            "\\'"
+          )}')">
+            ${stackNames
+              .map((name) => `<option value="${name}">${name}</option>`)
+              .join("")}
+          </select>
+        </label>
+      `;
+          } else if (project.technologies) {
+            techHTML = renderTechnologies(project.technologies);
+          }
+
+          // 🟢 Inject difficultyBadge here
+          card.innerHTML = `
+      <img src="${project.img}" alt="${project.title}" />
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="margin-bottom:0;">${project.title}</h3>
+        <div style="display:flex;gap:4px;">${difficultyBadge}</div>
+      </div>
+      <div class="desc short-desc">${truncateDescription(project.desc)}</div>
+        <span class="learn-more" onclick="showFullDesc(\`${escapeHtml(
+          project.desc
+        )}\`)">... (Learn more)</span>
+
+      <a href="${project.link}" target="_blank">View on GitHub</a>
+      <div class="tech-list" data-project="${project.title}">${techHTML}</div>
+      ${stackSelectorHTML}
+    `;
+
+          if (project.categories.includes("Development"))
+            devContainer.appendChild(card.cloneNode(true));
+          if (project.categories.includes("IoT"))
+            iotContainer.appendChild(card.cloneNode(true));
+          if (project.categories.includes("Networking"))
+            netContainer.appendChild(card.cloneNode(true));
+          if (project.categories.includes("H@cking"))
+            hackContainer.appendChild(card.cloneNode(true));
+        });
+      }
+
+      function truncateDescription(desc) {
+        // Strip HTML tags for preview and limit to 150 characters
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = desc;
+        const text = tempDiv.textContent || tempDiv.innerText || "";
+        return text.length > 150 ? text.slice(0, 150) + "..." : text;
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replace(/`/g, "\\`")
+          .replace(/\$/g, "\\$")
+          .replace(/\n/g, " ");
+      }
+
+      function showFullDesc(descHTML) {
+        const modal = document.getElementById("descModal");
+        const content = document.getElementById("modalContent");
+        content.innerHTML = descHTML;
+        modal.style.display = "flex";
+      }
+
+      document
+        .getElementById("descModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) this.style.display = "none";
+        });
+
+      function renderTechnologies(techs) {
+        return (
+          `<div style="margin-top:10px;font-size:0.9rem;"><strong>Used Technologies:</strong><br>` +
+          techs
+            .map((t) => {
+              const level = techLevels[t] || "easy";
+              const bg = level === "easy" ? "#4caf50" : "#ff9800";
+              return `<span style="display:inline-block;margin:2px 6px;padding:3px 6px;border-radius:8px;background:${bg};color:white;">${t}</span>`;
+            })
+            .join("") +
+          `</div>`
+        );
+      }
+
+      function updateTechList(selectElement, projectTitle) {
+        const selectedStack = selectElement.value;
+        const project = projects.find((p) => p.title === projectTitle);
+        const techListEl = selectElement
+          .closest(".project-card")
+          .querySelector(".tech-list");
+
+        if (project && project.technologiesOptions) {
+          techListEl.innerHTML = renderTechnologies(
+            project.technologiesOptions[selectedStack]
+          );
+        }
+      }
+
+      function enableImagePreview() {
+        const preview = document.getElementById("imgPreview");
+
+        document.querySelectorAll(".project-card img").forEach((img) => {
+          img.style.cursor = "pointer";
+          img.addEventListener("click", () => {
+            preview.src = img.src;
+            preview.style.display = "block";
+
+            setTimeout(() => {
+              preview.style.display = "none";
+            }, 2000);
+          });
+        });
+      }
+
+      //   let difficultyBadge = "";
+      //   if (project.difficulty) {
+      //     if (Array.isArray(project.difficulty)) {
+      //       difficultyBadge = project.difficulty
+      //         .map(
+      //           (level) => `<span class="tech-tag tech-${level}">${level}</span>`
+      //         )
+      //         .join(" ");
+      //     } else {
+      //       difficultyBadge = `<span class="tech-tag tech-${project.difficulty}">${project.difficulty}</span>`;
+      //     }
+      //   }
+
+      // Show popup message on mobile for sample tags
+      document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("tech-sample")) {
+          const popup = document.createElement("div");
+          popup.className = "sample-popup";
+          popup.innerText =
+            "This is a sample project. Take ideas from it and create your own.";
+          document.body.appendChild(popup);
+          popup.style.display = "block";
+
+          setTimeout(() => {
+            popup.remove();
+          }, 3000);
+        }
+      });
+
+      renderProjects();
+      enableImagePreview();
+    </script>
+  </body>
+</html>
