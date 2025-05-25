@@ -1132,53 +1132,31 @@
     container.appendChild(input);
   }
 
-  document.getElementById("submissionForm").addEventListener("submit", async function (e) {
-    e.preventDefault();
+  document.getElementById("submissionForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-    const data = new FormData(this);
-    const repos = data.getAll("repos[]").filter(url => url.trim() !== "");
-    if (repos.length === 0) {
-      alert("Please add at least one repository link.");
-      return;
-    }
+  const data = new FormData(this);
+  const repos = data.getAll("repos[]").filter(url => url.trim() !== "");
+  if (repos.length === 0) {
+    alert("Please add at least one repository link.");
+    return;
+  }
 
-    const body = `
-      Full Name: ${data.get("fullName")}
-      GitHub: ${data.get("githubLink")}
-      Repositories:
-      ${repos.map((r, i) => `• Repo ${i + 1}: ${r}`).join('\n')}
-    `;
+  const fullName = data.get("fullName");
+  const githubLink = data.get("githubLink");
+  const repoList = repos.map((r, i) => `• Repo ${i + 1}: ${r}`).join("\n");
 
-    // Use SMTP.js (Google App Password Required)
-    // Email.send({
-    //   SecureToken: "svdc klfd wphy rdvr", // Or use Username + App Password below
-    //   To: "your-email@gmail.com",
-    //   From: "your-email@gmail.com",
-    //   Subject: "🎓 Project Submission from GitHub Challenge",
-    //   Body: body.replace(/\n/g, "<br>"),
-    // }).then(() => {
-    //   alert("Project submitted successfully!");
-    //   togglePopup(false);
-    //   document.getElementById("submissionForm").reset();
-    // }).catch(err => {
-    //   alert("Failed to send: " + err);
-    // });
-    Email.send({
-        Host: "smtp.gmail.com",
-        Username: "mail.me.akashdip2001@gmail.com",
-        Password: "svdcklfdwphyrdvr",
-        To: "mail.me.akashdip2001@gmail.com",
-        From: "mail.me.akashdip2001@gmail.com",
-        Subject: "🎓 Project Submission from GitHub Challenge",
-        Body: body.replace(/\n/g, "<br>"),
-    }).then(() => {
-        alert("✅ Project submitted successfully!");
-        togglePopup(false);
-        document.getElementById("submissionForm").reset();
-    }).catch(err => {
-        alert("❌ Failed to send: " + err);
-    });
-  });
+  const message = `*🎓 GitHub Challenge Submission*\n\n*Name:* ${fullName}\n*GitHub:* ${githubLink}\n*Repositories:*\n${repoList}`;
+
+  // Encode the message for URL
+  const encodedMessage = encodeURIComponent(message);
+
+  // Redirect to WhatsApp chat with the message
+  window.open(`https://wa.me/917076033011?text=${encodedMessage}`, "_blank");
+
+  togglePopup(false);
+  document.getElementById("submissionForm").reset();
+});
 </script>
 
 <!-- Load SMTP.js -->
