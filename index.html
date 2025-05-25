@@ -519,6 +519,76 @@
 .youtube:hover {
   box-shadow: 0 0 20px #ff000080;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.modal-overlay.show {
+  display: flex;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-content input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  background: #1f1c2c;
+  color: white;
+}
+
+.modal-content label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+@media (max-width: 500px) {
+  .modal-content {
+    width: 75%;
+    max-height: 80vh;
+    overflow-y: auto;
+    margin-right: 15%;
+  }
+}
+
+.reward-cta-flex {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.reward-cta-flex .cta-button {
+  flex: 1 1 200px;
+  text-align: center;
+  min-width: 180px;
+}
+
+/* Optional: Make Submit button look different */
+.outline-button {
+  background: transparent;
+  border: 2px solid #ff9800;
+  color: #ff9800;
+  transition: all 0.3s ease;
+}
+.outline-button:hover {
+  background: #ff9800;
+  color: white;
+}
 </style>
 
 </head>
@@ -586,22 +656,22 @@
         <div class="reward-grid">
           <div class="reward-card">
             <h3>🎯 Easy + Hard Combo</h3>
-            <br>✅ 1 Easy Project  (complete)<br /><br>⚠ 1 hard project (may not complete - fork the repo and try to do something new)</p></br>
+            <br>✅ 1 Easy Project  (complete)<br /><br />⚠ 1 hard project (may not complete - fork the repo and try to do something new)</p>
             <span class="badge">1 Voucher 🎟️</span>
           </div>
           <div class="reward-card">
             <h3>🧠 Medium Project</h3>
-            <p>✅ Complete and Pull one medium-level project and explain what you do, and get</p></br>
+            <p>✅ Complete and Pull one medium-level project and explain what you do, and get</p>
             <span class="badge">1 Voucher 🎟️</span>
           </div>
           <div class="reward-card">
             <h3>🔥 Hard Project</h3>
-            <br>✅ Complete and Pull one hard-level project.<br><br>✅ Unique idea with excellent UX or features</p></br>
+            <br>✅ Complete and Pull one hard-level project.<br /><br />✅ Unique idea with excellent UX or features</p>
             <span class="badge">2 Vouchers 🎟️🎟️</span>
           </div>
           <div class="reward-card special">
             <h3>🚀 Scratch Project</h3>
-            <p>✅ Fully original concept from scratch</p></br>
+            <p>✅ Fully original concept from scratch</p>
             <span class="badge gold">3 Vouchers 🎟️🎟️🎟️</span>
           </div>
         </div>
@@ -614,17 +684,46 @@
           </ul>
         </div>
       
-        <div class="reward-cta">
-          <a
-            href="https://examregistration.github.com/"
-            target="_blank"
-            class="cta-button"
-          >
-            🔗 Register for Exam
-          </a>
-        </div>
+        <div class="reward-cta-flex">
+            <button onclick="togglePopup(true)" class="cta-button outline-button">
+              📥 Submit Your Work
+            </button>
+            <a
+              href="https://examregistration.github.com/"
+              target="_blank"
+              class="cta-button"
+            >
+              🔗 Register for Exam
+            </a>
+          </div>          
       </div>
-      
+  
+  <!-- 📨 Popup Modal -->
+  <div id="submitModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px;">
+      <h2 style="margin-bottom: 10px;">Submit Your Project</h2>
+      <form id="submissionForm">
+        <label>Full Name:</label>
+        <input type="text" name="fullName" required />
+  
+        <label>GitHub Profile Link:</label>
+        <input type="url" name="githubLink" required />
+  
+        <div id="projectLinks">
+          <label>Repository Link:</label>
+          <input type="url" name="repos[]" required />
+        </div>
+  
+        <button type="button" class="cta-button" onclick="addRepoInput()" style="margin: 10px 0;">
+          ➕ Add More Projects
+        </button>
+  
+        <button type="submit" class="cta-button">📧 Send</button>
+      </form>
+      <button onclick="togglePopup(false)" style="margin-top: 10px; color: #ff9800;">Close</button>
+    </div>
+  </div>
+  
 
     <footer
       style="
@@ -1016,6 +1115,74 @@
 
   window.addEventListener("scroll", updateFloatingButtonState);
   window.addEventListener("load", updateFloatingButtonState);
-    </script>
+
+  
+  function togglePopup(show) {
+    const modal = document.getElementById("submitModal");
+    modal.classList.toggle("show", show);
+  }
+
+  function addRepoInput() {
+    const container = document.getElementById("projectLinks");
+    const input = document.createElement("input");
+    input.type = "url";
+    input.name = "repos[]";
+    input.placeholder = "Another repo link";
+    input.required = true;
+    container.appendChild(input);
+  }
+
+  document.getElementById("submissionForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const data = new FormData(this);
+    const repos = data.getAll("repos[]").filter(url => url.trim() !== "");
+    if (repos.length === 0) {
+      alert("Please add at least one repository link.");
+      return;
+    }
+
+    const body = `
+      Full Name: ${data.get("fullName")}
+      GitHub: ${data.get("githubLink")}
+      Repositories:
+      ${repos.map((r, i) => `• Repo ${i + 1}: ${r}`).join('\n')}
+    `;
+
+    // Use SMTP.js (Google App Password Required)
+    // Email.send({
+    //   SecureToken: "svdc klfd wphy rdvr", // Or use Username + App Password below
+    //   To: "your-email@gmail.com",
+    //   From: "your-email@gmail.com",
+    //   Subject: "🎓 Project Submission from GitHub Challenge",
+    //   Body: body.replace(/\n/g, "<br>"),
+    // }).then(() => {
+    //   alert("Project submitted successfully!");
+    //   togglePopup(false);
+    //   document.getElementById("submissionForm").reset();
+    // }).catch(err => {
+    //   alert("Failed to send: " + err);
+    // });
+    Email.send({
+        Host: "smtp.gmail.com",
+        Username: "mail.me.akashdip2001@gmail.com",
+        Password: "svdcklfdwphyrdvr",
+        To: "mail.me.akashdip2001@gmail.com",
+        From: "mail.me.akashdip2001@gmail.com",
+        Subject: "🎓 Project Submission from GitHub Challenge",
+        Body: body.replace(/\n/g, "<br>"),
+    }).then(() => {
+        alert("✅ Project submitted successfully!");
+        togglePopup(false);
+        document.getElementById("submissionForm").reset();
+    }).catch(err => {
+        alert("❌ Failed to send: " + err);
+    });
+  });
+</script>
+
+<!-- Load SMTP.js -->
+<script src="https://smtpjs.com/v3/smtp.js"></script>
+    
   </body>
 </html>
